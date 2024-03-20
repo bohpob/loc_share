@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">LocShare</string>
+
+    <string name="title_home">Domů</string>
+    <string name="title_map">Mapa</string>
+
+    <string name="category">VYBERTE KATEGORII</string>
+
+    <string-array name="categories">
+        <item>ZÁCHRANKA</item>
+        <item>POLICIE</item>
+        <item>HASIČI</item>
+        <item>OSTATNÍ</item>
+    </string-array>
+
+    <string name="note">POZNÁMKY</string>
+
+    <string name="button_activation">AKTIVOVAT</string>
+    <string name="button_deactivation">DEAKTIVOVAT</string>
+
+    <string name="title_login">Přihlásit se</string>
+    <string name="title_register">Zaregistrovat se</string>
+    <string name="hint_password">Heslo (min. 8 znaků)</string>
+    <string name="hint_username">Username</string>
+</resources>
