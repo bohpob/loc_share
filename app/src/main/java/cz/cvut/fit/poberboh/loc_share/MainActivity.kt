@@ -1,35 +1,30 @@
 package cz.cvut.fit.poberboh.loc_share
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import cz.cvut.fit.poberboh.loc_share.databinding.ActivityMainBinding
+import androidx.lifecycle.asLiveData
+import cz.cvut.fit.poberboh.loc_share.data.AppPreferences
+import cz.cvut.fit.poberboh.loc_share.utils.startNewActivity
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
-        val navView: BottomNavigationView = binding.navView
+        val appPreferences = AppPreferences(this)
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        appPreferences.accessToken
+            .asLiveData()
+            .observe(this) {
+                val activity =
+                    if (it == null) {
+                        AuthActivity::class.java
+                    } else {
+                        HomeActivity::class.java
+                    }
+                startNewActivity(activity)
+            }
     }
 }

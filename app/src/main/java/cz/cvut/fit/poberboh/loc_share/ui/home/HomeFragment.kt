@@ -1,5 +1,6 @@
 package cz.cvut.fit.poberboh.loc_share.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,93 +9,125 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import android.widget.ProgressBar
+import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import cz.cvut.fit.poberboh.loc_share.R
 import cz.cvut.fit.poberboh.loc_share.databinding.FragmentHomeBinding
+import cz.cvut.fit.poberboh.loc_share.network.Resource
+import cz.cvut.fit.poberboh.loc_share.network.api.BasicApi
+import cz.cvut.fit.poberboh.loc_share.network.responses.UserResponse
+import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
+import cz.cvut.fit.poberboh.loc_share.ui.base.BaseFragment
+import cz.cvut.fit.poberboh.loc_share.utils.enable
+import cz.cvut.fit.poberboh.loc_share.utils.visible
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
-class HomeFragment : Fragment() {
-
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, BasicRepository>() {
 
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var buttonToggle: Button
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var buttonLogout: Button
     private lateinit var editTextCenter: EditText
     private lateinit var textInputLayout: TextInputLayout
+    private lateinit var homeProgressBar: ProgressBar
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        homeViewModel.updateCategoriesFromResources(requireContext().resources)
-
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        autoCompleteTextView = root.findViewById(R.id.auto_complete)
-        editTextCenter = root.findViewById(R.id.editTextCenter)
-        textInputLayout = root.findViewById(R.id.textInputLayout)
-
+        setupViews()
+        observeUsername()
+        observeButtonToggle()
+        setupListeners()
         setupAutoCompleteTextView()
-        setupButtonToggle()
-
-        return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupViews() {
+        autoCompleteTextView = binding.autoComplete
+        editTextCenter = binding.editTextCenter
+        textInputLayout = binding.textInputLayout
+        homeProgressBar = binding.homeFragmentProgressBar
+        buttonLogout = binding.buttonLogout
+        buttonToggle = binding.buttonToggle
+        homeProgressBar.visible(false)
     }
 
-    private fun setupAutoCompleteTextView() {
-        homeViewModel.categories.observe(viewLifecycleOwner) { categories ->
-            val adapter = ArrayAdapter(requireContext(), R.layout.list_item, categories)
-            autoCompleteTextView.setAdapter(adapter)
-        }
+    private fun observeUsername() {
+        viewModel.getUsername()
 
-        autoCompleteTextView.setText(homeViewModel.selectedCategory.value, false)
-
-        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
-            val selectedCategory = homeViewModel.categories.value?.get(position)
-            selectedCategory?.let {
-                homeViewModel.setSelectedCategory(it)
+        viewModel.user.observe(viewLifecycleOwner) { user ->
+            homeProgressBar.visible(user is Resource.Loading)
+            when (user) {
+                is Resource.Success -> updateUsername(user.data)
+                is Resource.Loading -> homeProgressBar.visible(true)
+                is Resource.Failure -> {
+                    viewModel.logout()
+                    logout()
+                }
             }
         }
     }
 
-    private fun setupButtonToggle() {
-        buttonToggle = binding.buttonToggle
+    private fun observeButtonToggle() {
+        buttonToggle.enable(false)
 
-        homeViewModel.isButtonActivated.observe(viewLifecycleOwner) { isActivated ->
-            updateButtonState(isActivated)
-            autoCompleteTextView.isEnabled = !isActivated
-            textInputLayout.isEnabled = !isActivated
-            editTextCenter.isEnabled = !isActivated
+        viewModel.button.observe(viewLifecycleOwner) { button ->
+            editTextCenter.enable(button.first)
+            textInputLayout.enable(button.first)
+            autoCompleteTextView.enable(button.first)
+
+            buttonToggle.setBackgroundColor(button.second)
+            buttonToggle.text = button.third
         }
 
-        homeViewModel.isCategorySelected.observe(viewLifecycleOwner) { isCategorySelected ->
-            buttonToggle.isEnabled = isCategorySelected
-        }
-
-        buttonToggle.setOnClickListener {
-            homeViewModel.toggleButton()
+        viewModel.selectedCategory.observe(viewLifecycleOwner) { category ->
+            buttonToggle.enable(!category.isNullOrBlank())
         }
     }
 
-    private fun updateButtonState(isActivated: Boolean) {
-        if (isActivated) {
-            buttonToggle.text = requireContext().getString(R.string.button_deactivation)
-            buttonToggle.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-        } else {
-            buttonToggle.text = requireContext().getString(R.string.button_activation)
-            buttonToggle.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+    private fun setupListeners() {
+        editTextCenter.addTextChangedListener { text -> viewModel.setEnteredText(text.toString()) }
+        buttonToggle.setOnClickListener { viewModel.toggleButton() }
+        buttonLogout.setOnClickListener {
+            viewModel.logout()
+            logout()
         }
+    }
+
+    private fun setupAutoCompleteTextView() {
+        viewModel.categories.observe(viewLifecycleOwner) { categories ->
+            val adapter = ArrayAdapter(requireContext(), R.layout.list_item, categories)
+            autoCompleteTextView.setAdapter(adapter)
+        }
+
+        autoCompleteTextView.setText(viewModel.selectedCategory.value, false)
+
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            val selectedCategory = viewModel.categories.value?.get(position)
+            selectedCategory?.let {
+                viewModel.setSelectedCategory(it)
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateUsername(userResponse: UserResponse) {
+        with(binding) {
+            textUsername.text = viewModel.getUsernameForm() + " " + userResponse.username.toString()
+        }
+    }
+
+    override fun getViewModel() = HomeViewModel::class.java
+
+    override fun getFragmentBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ) = FragmentHomeBinding.inflate(inflater, container, false)
+
+    override fun getFragmentRepository(): BasicRepository {
+        val token = runBlocking { appPreferences.accessToken.first() }
+        val api = remoteDataSource.buildApi(BasicApi::class.java, token)
+        return BasicRepository(api, appPreferences)
     }
 }

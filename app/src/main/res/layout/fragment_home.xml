@@ -4,8 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment"
-    android:paddingTop="?attr/actionBarSize">
+    tools:context=".ui.home.HomeFragment">
+
+    <TextView
+        android:id="@+id/text_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="40dp"
+        android:text="@string/username"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/green"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -14,8 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:paddingHorizontal="24dp"
+        android:paddingTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_username"
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
@@ -33,13 +50,13 @@
         android:layout_width="0dp"
         android:layout_height="160dp"
         android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="60dp"
         android:autofillHints=""
         android:background="@color/white"
         android:gravity="top"
         android:hint="@string/note"
         android:inputType="textMultiLine|textLongMessage"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
@@ -48,10 +65,35 @@
         android:id="@+id/button_toggle"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
-        android:text="@string/button_activation"
+        android:layout_marginTop="60dp"
+        android:text="@string/text_button_activation"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCenter" />
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:text="@string/text_button_logout"
+        android:textColor="@color/green"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintVertical_bias="0.85" />
+
+
+    <ProgressBar
+        android:id="@+id/home_fragment_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
