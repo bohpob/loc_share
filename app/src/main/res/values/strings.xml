@@ -15,11 +15,15 @@
 
     <string name="note">POZNÁMKY</string>
 
-    <string name="button_activation">AKTIVOVAT</string>
-    <string name="button_deactivation">DEAKTIVOVAT</string>
+    <string name="text_button_activation">AKTIVOVAT</string>
+    <string name="text_button_deactivation">DEAKTIVOVAT</string>
+    <string name="text_button_logout">Přepnout uživatele</string>
 
     <string name="title_login">Přihlásit se</string>
     <string name="title_register">Zaregistrovat se</string>
     <string name="hint_password">Heslo (min. 8 znaků)</string>
-    <string name="hint_username">Username</string>
+    <string name="hint_repeat_password">Zopakujte heslo</string>
+    <string name="hint_username">Uživatelské jméno</string>
+    <string name="username">Uživatelské jméno:</string>
+    <string name="password_mismatch_warning">Hesla se neshodují</string>
 </resources>

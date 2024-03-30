@@ -12,8 +12,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="cz.cvut.fit.poberboh.loc_share.ui.map.MapFragment"
+        android:id="@+id/navigation_map"
+        android:name="cz.cvut.fit.poberboh.loc_share.ui.home.MapFragment"
         android:label="@string/title_map"
         tools:layout="@layout/fragment_map" />
 </navigation>
