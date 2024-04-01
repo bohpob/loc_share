@@ -18,13 +18,13 @@ import cz.cvut.fit.poberboh.loc_share.network.Resource
 import cz.cvut.fit.poberboh.loc_share.network.api.BasicApi
 import cz.cvut.fit.poberboh.loc_share.network.responses.UserResponse
 import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
-import cz.cvut.fit.poberboh.loc_share.ui.base.BaseFragment
 import cz.cvut.fit.poberboh.loc_share.utils.enable
 import cz.cvut.fit.poberboh.loc_share.utils.visible
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.osmdroid.views.MapView
 
-class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, BasicRepository>() {
+class HomeFragment : LocationFragment<FragmentHomeBinding>() {
 
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var buttonToggle: Button
@@ -41,6 +41,11 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, BasicRepos
         observeButtonToggle()
         setupListeners()
         setupAutoCompleteTextView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.visibility = MapView.INVISIBLE
     }
 
     private fun setupViews() {

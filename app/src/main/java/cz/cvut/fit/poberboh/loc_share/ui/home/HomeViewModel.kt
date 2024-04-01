@@ -13,6 +13,7 @@ import cz.cvut.fit.poberboh.loc_share.network.responses.UserResponse
 import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
 import cz.cvut.fit.poberboh.loc_share.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
+import org.osmdroid.util.GeoPoint
 import java.util.Timer
 import java.util.TimerTask
 
@@ -20,7 +21,8 @@ class HomeViewModel(
     private val repository: BasicRepository
 ) : BaseViewModel(repository) {
 
-    private var _currentIncidentId: MutableLiveData<Long> = MutableLiveData()
+    private val _currentLocation: MutableLiveData<GeoPoint> = MutableLiveData()
+    private val _currentIncidentId: MutableLiveData<Long> = MutableLiveData()
     private val _user: MutableLiveData<Resource<UserResponse>> = MutableLiveData()
     private val _incident: MutableLiveData<Resource<IncidentResponse>> = MutableLiveData()
     private val _gpsIncident: MutableLiveData<Resource<GPSIncidentResponse>> = MutableLiveData()
@@ -73,6 +75,10 @@ class HomeViewModel(
         _stop.value = repository.stop(_currentIncidentId.value!!.toString())
     }
 
+    fun updateCurrentLocation(point: GeoPoint) = viewModelScope.launch {
+        _currentLocation.value = point
+    }
+
     fun logout() = viewModelScope.launch {
         if (!_button.value!!.first && _currentIncidentId.value != null) {
             repository.stop(_currentIncidentId.value!!.toString())
@@ -103,7 +109,10 @@ class HomeViewModel(
             override fun run() {
                 createGPSIncident(
                     _currentIncidentId.value!!,
-                    GPSIncidentRequest("2", "2") //@todo
+                    GPSIncidentRequest(
+                        _currentLocation.value?.latitude.toString(),
+                        _currentLocation.value?.longitude.toString() //@todo
+                    )
                 )
             }
         }, 5000, 5000)

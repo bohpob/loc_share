@@ -10,7 +10,8 @@
         android:id="@+id/text_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="40dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingHorizontal="40dp"
         android:text="@string/username"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
@@ -19,8 +20,7 @@
         android:textStyle="bold"
         android:typeface="normal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlSymmetry" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -29,11 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:paddingHorizontal="24dp"
-        android:paddingTop="30dp"
+        android:paddingTop="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_username"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/text_username">
 
         <AutoCompleteTextView
             android:id="@+id/auto_complete"

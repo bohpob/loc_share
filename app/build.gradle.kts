@@ -41,19 +41,22 @@ android {
 dependencies {
     implementation(libs.material)
 
+    implementation(libs.osmdroid.android)
+
     implementation(libs.squareup.okhttp3)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)
 
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.preference)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
 
     testImplementation(libs.junit)
 
