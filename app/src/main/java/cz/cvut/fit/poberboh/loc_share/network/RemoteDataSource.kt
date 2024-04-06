@@ -11,10 +11,7 @@ class RemoteDataSource {
         private const val BASE_URL = "http://192.168.0.105:8080"
     }
 
-    fun <Api> buildApi(
-        api: Class<Api>,
-        accessToken: String? = null
-    ): Api {
+    fun <Api> buildApi(api: Class<Api>, accessToken: String? = null): Api {
         return Retrofit.Builder().baseUrl(BASE_URL)
             .client(
                 OkHttpClient.Builder()

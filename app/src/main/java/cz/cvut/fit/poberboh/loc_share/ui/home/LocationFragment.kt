@@ -21,7 +21,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 abstract class LocationFragment<B : ViewBinding> :
     BaseFragment<HomeViewModel, B, BasicRepository>() {
 
-    private lateinit var gpsMyLocationProvider: GpsMyLocationProvider
+    private lateinit var myLocationProvider: GpsMyLocationProvider
     private lateinit var myLocationOverlay: MyLocationNewOverlay
     protected lateinit var mapView: MapView
 
@@ -35,11 +35,21 @@ abstract class LocationFragment<B : ViewBinding> :
         super.onViewStateRestored(savedInstanceState)
 
         mapView = (requireActivity() as HomeActivity).mapView
+        setupMapView()
+        setupCompass()
+        setupLocationOverlay()
+        setupLocationOverlay()
+        mapView.visibility = MapView.VISIBLE
+    }
+
+    private fun setupMapView() {
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         mapView.controller.setZoom(18.0)
         mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
         mapView.setMultiTouchControls(true)
+    }
 
+    private fun setupCompass() {
         val compassOverlay = CompassOverlay(
             requireContext(),
             InternalCompassOrientationProvider(requireContext()),
@@ -47,12 +57,13 @@ abstract class LocationFragment<B : ViewBinding> :
         )
         compassOverlay.enableCompass()
         mapView.overlays.add(compassOverlay)
+    }
 
+    private fun setupLocationOverlay() {
+        myLocationProvider = GpsMyLocationProvider(requireContext())
+        myLocationProvider.locationUpdateMinTime = 500
 
-        gpsMyLocationProvider = GpsMyLocationProvider(requireContext())
-        gpsMyLocationProvider.locationUpdateMinTime = 500
-
-        myLocationOverlay = object : MyLocationNewOverlay(gpsMyLocationProvider, mapView) {
+        myLocationOverlay = object : MyLocationNewOverlay(myLocationProvider, mapView) {
             override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
                 super.onLocationChanged(location, source)
 
@@ -63,9 +74,7 @@ abstract class LocationFragment<B : ViewBinding> :
                 }
             }
         }
-        myLocationOverlay.enableMyLocation(gpsMyLocationProvider)
+        myLocationOverlay.enableMyLocation(myLocationProvider)
         mapView.overlays.add(myLocationOverlay)
-
-        mapView.visibility = MapView.VISIBLE
     }
 }

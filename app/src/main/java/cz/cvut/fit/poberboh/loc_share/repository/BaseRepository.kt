@@ -9,16 +9,14 @@ import retrofit2.HttpException
 import java.net.ConnectException
 
 abstract class BaseRepository {
-    suspend fun <T> safeApiCall(
-        apiCall: suspend () -> T
-    ): Resource<T> {
+    suspend fun <T> safeApiCall(apiCall: suspend () -> T): Resource<T> {
         return withContext(Dispatchers.IO) {
             try {
                 Resource.Success(apiCall.invoke())
             } catch (throwable: Throwable) {
                 when (throwable) {
                     is ConnectException -> {
-                        Resource.Failure(
+                        Resource.Error(
                             false,
                             null,
                             "Failed to connect".toResponseBody("text/plain".toMediaTypeOrNull())
@@ -26,11 +24,11 @@ abstract class BaseRepository {
                     }
 
                     is HttpException -> {
-                        Resource.Failure(false, throwable.code(), throwable.response()?.errorBody())
+                        Resource.Error(false, throwable.code(), throwable.response()?.errorBody())
                     }
 
                     else -> {
-                        Resource.Failure(true, null, null)
+                        Resource.Error(true, null, null)
                     }
                 }
             }

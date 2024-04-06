@@ -19,6 +19,7 @@ import cz.cvut.fit.poberboh.loc_share.network.api.BasicApi
 import cz.cvut.fit.poberboh.loc_share.network.responses.UserResponse
 import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
 import cz.cvut.fit.poberboh.loc_share.utils.enable
+import cz.cvut.fit.poberboh.loc_share.utils.handleApiError
 import cz.cvut.fit.poberboh.loc_share.utils.visible
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -38,6 +39,8 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
 
         setupViews()
         observeUsername()
+        observeIncident()
+        observeStop()
         observeButtonToggle()
         setupListeners()
         setupAutoCompleteTextView()
@@ -66,10 +69,27 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
             when (user) {
                 is Resource.Success -> updateUsername(user.data)
                 is Resource.Loading -> homeProgressBar.visible(true)
-                is Resource.Failure -> {
-                    viewModel.logout()
-                    logout()
-                }
+                is Resource.Error -> handleApiError(user) { viewModel.getUsername() }
+            }
+        }
+    }
+
+    private fun observeIncident() {
+        viewModel.incident.observe(viewLifecycleOwner) { incident ->
+            when (incident) {
+                is Resource.Success -> viewModel.handleIncident(incident.data.id)
+                is Resource.Error -> handleApiError(incident) { viewModel.createIncident() }
+                else -> {}
+            }
+        }
+    }
+
+    private fun observeStop() {
+        viewModel.stop.observe(viewLifecycleOwner) { stop ->
+            when (stop) {
+                is Resource.Success -> viewModel.handleStopShare()
+                is Resource.Error -> handleApiError(stop) { viewModel.stopShare() }
+                else -> {}
             }
         }
     }

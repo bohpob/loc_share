@@ -32,10 +32,6 @@ class AuthViewModel(private val repository: AuthRepository) : BaseViewModel(repo
             _registerResponse.value = repository.register(username, password)
         }
 
-    fun authenticate() = viewModelScope.launch {
-        repository.authenticate()
-    }
-
     fun getPasswordMismatchWarning(): String {
         return repository.getPasswordMismatchWarning()
     }

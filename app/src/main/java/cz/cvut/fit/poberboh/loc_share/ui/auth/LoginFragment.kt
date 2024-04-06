@@ -61,7 +61,7 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
                     }
                 }
 
-                is Resource.Failure -> handleApiError(token) { login() }
+                is Resource.Error -> handleApiError(token) { login() }
                 is Resource.Loading -> loginProgressBar.visible(true)
             }
         }

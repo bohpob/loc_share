@@ -15,7 +15,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class AppPreferences(context: Context) {
 
     private val appContext = context.applicationContext
-    private val appResources = appContext.resources
+    private val appResources = context.resources
 
     val accessToken: Flow<String?>
         get() = appContext.dataStore.data.map { preferences ->

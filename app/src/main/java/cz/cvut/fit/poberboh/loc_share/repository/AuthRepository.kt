@@ -18,10 +18,6 @@ class AuthRepository(
         )
     }
 
-    suspend fun saveAccessToken(accessToken: String) {
-        preferences.saveAccessToken(accessToken)
-    }
-
     suspend fun login(username: String, password: String) = safeApiCall {
         val response = api.login(
             request = AuthRequest(
@@ -32,8 +28,8 @@ class AuthRepository(
         response
     }
 
-    suspend fun authenticate() = safeApiCall {
-        api.authenticate()
+    suspend fun saveAccessToken(accessToken: String) {
+        preferences.saveAccessToken(accessToken)
     }
 
     fun getPasswordMismatchWarning(): String {

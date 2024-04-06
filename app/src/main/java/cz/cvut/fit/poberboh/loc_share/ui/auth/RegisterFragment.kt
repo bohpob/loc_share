@@ -57,7 +57,7 @@ class RegisterFragment : BaseFragment<AuthViewModel, FragmentRegisterBinding, Au
             when (it) {
                 is Resource.Success -> requireActivity().startNewActivity(AuthActivity::class.java)
                 is Resource.Loading -> registerProgressBar.visible(true)
-                is Resource.Failure -> handleApiError(it) { register() }
+                is Resource.Error -> handleApiError(it) { register() }
             }
         }
     }
