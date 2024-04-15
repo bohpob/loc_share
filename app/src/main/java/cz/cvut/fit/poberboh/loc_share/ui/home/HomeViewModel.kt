@@ -15,7 +15,6 @@ import java.util.Timer
 import java.util.TimerTask
 
 class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(repository) {
-
     private val _location: MutableLiveData<GeoPoint> = MutableLiveData()
     private val _incidentId: MutableLiveData<Long?> = MutableLiveData()
     private val _user: MutableLiveData<Resource<UserResponse>> = MutableLiveData()
@@ -37,6 +36,7 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     val selectedCategory: LiveData<String> get() = _selectedCategory
     val categories: LiveData<List<String>> get() = _categories
     private var timer: Timer? = null
+    private val locationUpdateInterval = 2000L
 
     fun getUsername() = viewModelScope.launch {
         if (_user.value == null) {
@@ -73,11 +73,13 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     }
 
     fun recordLocation() = viewModelScope.launch {
-        repository.recordLocation(
-            _incidentId.value!!,
-            _location.value?.latitude.toString(),
-            _location.value?.longitude.toString()
-        )
+        if (_location.value?.latitude != null && _location.value?.longitude != null) {
+            repository.recordLocation(
+                _incidentId.value!!,
+                _location.value?.latitude!!,
+                _location.value?.longitude!!
+            )
+        }
     }
 
     fun updateCurrentLocation(point: GeoPoint) = viewModelScope.launch {
@@ -106,7 +108,7 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
             override fun run() {
                 recordLocation()
             }
-        }, 3000, 3000)
+        }, locationUpdateInterval, locationUpdateInterval)
     }
 
     private fun stopRequestTimer() {

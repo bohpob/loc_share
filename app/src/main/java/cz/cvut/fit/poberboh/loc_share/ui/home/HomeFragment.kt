@@ -21,9 +21,6 @@ import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
 import cz.cvut.fit.poberboh.loc_share.utils.enable
 import cz.cvut.fit.poberboh.loc_share.utils.handleApiError
 import cz.cvut.fit.poberboh.loc_share.utils.visible
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.osmdroid.views.MapView
 
 class HomeFragment : LocationFragment<FragmentHomeBinding>() {
 
@@ -44,11 +41,6 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         observeButtonToggle()
         setupListeners()
         setupAutoCompleteTextView()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.visibility = MapView.INVISIBLE
     }
 
     private fun setupViews() {
@@ -151,8 +143,7 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
     ) = FragmentHomeBinding.inflate(inflater, container, false)
 
     override fun getFragmentRepository(): BasicRepository {
-        val token = runBlocking { appPreferences.accessToken.first() }
-        val api = remoteDataSource.buildApi(BasicApi::class.java, token)
+        val api = remoteDataSource.buildApi(BasicApi::class.java, appPreferences)
         return BasicRepository(api, appPreferences)
     }
 }

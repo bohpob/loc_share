@@ -100,5 +100,8 @@ class RegisterFragment : BaseFragment<AuthViewModel, FragmentRegisterBinding, Au
     ) = FragmentRegisterBinding.inflate(inflater, container, false)
 
     override fun getFragmentRepository() =
-        AuthRepository(remoteDataSource.buildApi(AuthApi::class.java), appPreferences)
+        AuthRepository(
+            remoteDataSource.buildApi(AuthApi::class.java, appPreferences),
+            appPreferences
+        )
 }

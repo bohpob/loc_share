@@ -18,7 +18,7 @@ abstract class BaseRepository {
                     is ConnectException -> {
                         Resource.Error(
                             false,
-                            null,
+                            -1,
                             "Failed to connect".toResponseBody("text/plain".toMediaTypeOrNull())
                         )
                     }

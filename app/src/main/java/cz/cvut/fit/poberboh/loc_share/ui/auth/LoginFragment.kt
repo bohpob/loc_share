@@ -56,7 +56,10 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
             when (token) {
                 is Resource.Success -> {
                     lifecycleScope.launch {
-                        viewModel.saveAccessToken(token.data.token!!)
+                        viewModel.saveTokens(
+                            token.data.accessToken!!,
+                            token.data.refreshToken!!
+                        )
                         requireActivity().startNewActivity(HomeActivity::class.java)
                     }
                 }
@@ -94,5 +97,8 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
     ) = FragmentLoginBinding.inflate(inflater, container, false)
 
     override fun getFragmentRepository() =
-        AuthRepository(remoteDataSource.buildApi(AuthApi::class.java), appPreferences)
+        AuthRepository(
+            remoteDataSource.buildApi(AuthApi::class.java, appPreferences),
+            appPreferences
+        )
 }

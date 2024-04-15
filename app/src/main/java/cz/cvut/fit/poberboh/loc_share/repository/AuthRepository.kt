@@ -28,8 +28,8 @@ class AuthRepository(
         response
     }
 
-    suspend fun saveAccessToken(accessToken: String) {
-        preferences.saveAccessToken(accessToken)
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        preferences.saveTokens(accessToken, refreshToken)
     }
 
     fun getPasswordMismatchWarning(): String {

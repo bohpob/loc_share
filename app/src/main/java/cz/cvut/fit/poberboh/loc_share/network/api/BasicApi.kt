@@ -1,7 +1,7 @@
 package cz.cvut.fit.poberboh.loc_share.network.api
 
 import cz.cvut.fit.poberboh.loc_share.network.requests.IncidentRequest
-import cz.cvut.fit.poberboh.loc_share.network.requests.LocationRequest
+import cz.cvut.fit.poberboh.loc_share.network.requests.RecordLocationRequest
 import cz.cvut.fit.poberboh.loc_share.network.responses.IncidentResponse
 import cz.cvut.fit.poberboh.loc_share.network.responses.UserResponse
 import retrofit2.http.Body
@@ -18,7 +18,7 @@ interface BasicApi {
     suspend fun createIncident(@Body request: IncidentRequest): IncidentResponse
 
     @POST("api/v1/incidents/locations")
-    suspend fun recordLocation(@Body request: LocationRequest): Unit
+    suspend fun recordLocation(@Body request: RecordLocationRequest): Unit
 
     @PATCH("api/v1/incidents/{id}")
     suspend fun stopShare(@Path("id") id: Long): Unit

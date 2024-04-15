@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.map
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "data_store")
 
 class AppPreferences(context: Context) {
+    companion object {
+        private val ACCESS_TOKEN = stringPreferencesKey("accessToken")
+        private val REFRESH_TOKEN = stringPreferencesKey("refreshToken")
+    }
 
     private val appContext = context.applicationContext
     private val appResources = context.resources
@@ -22,9 +26,15 @@ class AppPreferences(context: Context) {
             preferences[ACCESS_TOKEN]
         }
 
-    suspend fun saveAccessToken(accessToken: String) {
+    val refreshToken: Flow<String?>
+        get() = appContext.dataStore.data.map { preferences ->
+            preferences[REFRESH_TOKEN]
+        }
+
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
         appContext.dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN] = accessToken
+            preferences[REFRESH_TOKEN] = refreshToken
         }
     }
 
@@ -60,9 +70,5 @@ class AppPreferences(context: Context) {
 
     fun getPasswordMismatchWarning(): String {
         return appResources.getString(R.string.password_mismatch_warning)
-    }
-
-    companion object {
-        private val ACCESS_TOKEN = stringPreferencesKey("jwt")
     }
 }

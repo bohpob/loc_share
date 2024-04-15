@@ -5,8 +5,6 @@ import android.view.ViewGroup
 import cz.cvut.fit.poberboh.loc_share.databinding.FragmentMapBinding
 import cz.cvut.fit.poberboh.loc_share.network.api.BasicApi
 import cz.cvut.fit.poberboh.loc_share.repository.BasicRepository
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import org.osmdroid.views.MapView
 
 class MapFragment : LocationFragment<FragmentMapBinding>() {
@@ -29,8 +27,7 @@ class MapFragment : LocationFragment<FragmentMapBinding>() {
     ) = FragmentMapBinding.inflate(inflater, container, false)
 
     override fun getFragmentRepository(): BasicRepository {
-        val token = runBlocking { appPreferences.accessToken.first() }
-        val api = remoteDataSource.buildApi(BasicApi::class.java, token)
+        val api = remoteDataSource.buildApi(BasicApi::class.java, appPreferences)
         return BasicRepository(api, appPreferences)
     }
 }

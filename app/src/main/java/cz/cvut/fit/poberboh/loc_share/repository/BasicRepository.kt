@@ -3,7 +3,7 @@ package cz.cvut.fit.poberboh.loc_share.repository
 import cz.cvut.fit.poberboh.loc_share.data.AppPreferences
 import cz.cvut.fit.poberboh.loc_share.network.api.BasicApi
 import cz.cvut.fit.poberboh.loc_share.network.requests.IncidentRequest
-import cz.cvut.fit.poberboh.loc_share.network.requests.LocationRequest
+import cz.cvut.fit.poberboh.loc_share.network.requests.RecordLocationRequest
 
 class BasicRepository(
     private val api: BasicApi,
@@ -23,10 +23,10 @@ class BasicRepository(
         )
     }
 
-    suspend fun recordLocation(incidentId: Long, latitude: String, longitude: String) =
+    suspend fun recordLocation(incidentId: Long, latitude: Double, longitude: Double) =
         safeApiCall {
             api.recordLocation(
-                request = LocationRequest(
+                request = RecordLocationRequest(
                     incidentId = incidentId,
                     latitude = latitude,
                     longitude = longitude

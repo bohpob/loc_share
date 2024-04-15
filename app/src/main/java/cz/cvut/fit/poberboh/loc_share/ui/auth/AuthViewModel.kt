@@ -22,8 +22,8 @@ class AuthViewModel(private val repository: AuthRepository) : BaseViewModel(repo
         _loginResponse.value = repository.login(username, password)
     }
 
-    suspend fun saveAccessToken(accessToken: String) {
-        repository.saveAccessToken(accessToken)
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        repository.saveTokens(accessToken, refreshToken)
     }
 
     fun register(username: String, password: String) =

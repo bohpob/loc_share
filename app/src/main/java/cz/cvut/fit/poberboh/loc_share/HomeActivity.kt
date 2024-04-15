@@ -1,23 +1,28 @@
 package cz.cvut.fit.poberboh.loc_share
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import cz.cvut.fit.poberboh.loc_share.databinding.ActivityHomeBinding
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.compass.CompassOverlay
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class HomeActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityHomeBinding
-    private val requestPermissionsCode = 1
+
+    internal lateinit var myLocationProvider: GpsMyLocationProvider
+    internal lateinit var myLocationOverlay: MyLocationNewOverlay
     internal lateinit var mapView: MapView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,13 +30,22 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loadMapView()
+        initializeMapView()
         setupNavigation()
-        requestPermissionsIfNecessary()
     }
 
-    private fun loadMapView() {
+    private fun initializeMapView() {
+        Configuration.getInstance()
+            .load(
+                applicationContext,
+                PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            )
+
         mapView = binding.mapView
+        setupLocationOverlay()
+        setupMapView()
+        setupCompass()
+        mapView.visibility = MapView.INVISIBLE
     }
 
     private fun setupNavigation() {
@@ -46,31 +60,28 @@ class HomeActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    private fun requestPermissionsIfNecessary() {
-        val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.INTERNET
-        )
+    private fun setupLocationOverlay() {
+        myLocationProvider = GpsMyLocationProvider(applicationContext)
+        myLocationOverlay = MyLocationNewOverlay(myLocationProvider, mapView)
+        myLocationOverlay.enableFollowLocation()
+        myLocationOverlay.enableMyLocation(myLocationProvider)
+        mapView.overlays.add(myLocationOverlay)
+    }
 
-        val permissionsToRequest = ArrayList<String>()
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                permissionsToRequest.add(permission)
-            }
-        }
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toTypedArray(),
-                requestPermissionsCode
-            )
-        }
+    private fun setupMapView() {
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.controller.setZoom(18.0)
+        mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
+        mapView.setMultiTouchControls(true)
+    }
+
+    private fun setupCompass() {
+        val compassOverlay = CompassOverlay(
+            applicationContext,
+            InternalCompassOrientationProvider(applicationContext),
+            mapView
+        )
+        compassOverlay.enableCompass()
+        mapView.overlays.add(compassOverlay)
     }
 }

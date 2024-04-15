@@ -35,6 +35,7 @@ abstract class BaseFragment<VM : BaseViewModel, B : ViewBinding, R : BaseReposit
 
         lifecycleScope.launch {
             appPreferences.accessToken.first()
+            appPreferences.refreshToken.first()
         }
         return binding.root
     }
