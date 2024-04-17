@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RemoteDataSource {
     companion object {
-        private const val HOST = "192.168.0.103"
+        private const val HOST = "192.168.0.101"
         private const val PORT = "8080"
         private const val BASE_URL = "http://${HOST}:${PORT}"
     }

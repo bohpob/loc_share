@@ -18,7 +18,7 @@ class BasicRepository(
         api.createIncident(
             request = IncidentRequest(
                 category = category,
-                note = text
+                note = text ?: ""
             )
         )
     }

@@ -56,8 +56,6 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
 
     fun handleIncident(incidentId: Long) = viewModelScope.launch {
         _incidentId.value = incidentId
-        startRequestTimer()
-        _button.value = repository.getRedButtonProperties()
     }
 
     fun stopShare() = viewModelScope.launch {
@@ -68,12 +66,12 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
 
     fun handleStopShare() = viewModelScope.launch {
         _incidentId.value = null
-        stopRequestTimer()
-        _button.value = repository.getGreenButtonProperties()
     }
 
     fun recordLocation() = viewModelScope.launch {
-        if (_location.value?.latitude != null && _location.value?.longitude != null) {
+        if (_incident.value != null &&
+            _location.value?.latitude != null && _location.value?.longitude != null
+        ) {
             repository.recordLocation(
                 _incidentId.value!!,
                 _location.value?.latitude!!,
@@ -95,8 +93,12 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     fun toggleButton() {
         if (_button.value!!.first) {
             createIncident()
+            startRequestTimer()
+            _button.value = repository.getRedButtonProperties()
         } else {
             stopShare()
+            stopRequestTimer()
+            _button.value = repository.getGreenButtonProperties()
         }
     }
 

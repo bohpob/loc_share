@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="?attr/actionBarSize"
-        android:paddingHorizontal="40dp"
+        android:paddingHorizontal="55dp"
         android:text="@string/username"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
