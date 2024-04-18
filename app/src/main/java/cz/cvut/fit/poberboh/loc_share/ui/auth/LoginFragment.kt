@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -71,11 +72,14 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
     }
 
     private fun setupTextChangeListeners() {
-        editTextPassword.addTextChangedListener {
+        val updateButtonState: () -> Unit = {
             val username = editTextUsername.text.toString().trim()
-            buttonLogin.enable(username.isNotEmpty() && it.toString().isNotEmpty())
-
+            val password = editTextPassword.text.toString().trim()
+            buttonLogin.enable(username.isNotEmpty() && password.isNotEmpty())
         }
+
+        editTextUsername.addTextChangedListener { updateButtonState() }
+        editTextPassword.addTextChangedListener { updateButtonState() }
     }
 
     private fun setupClickListeners() {
@@ -86,7 +90,13 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
     private fun login() {
         val username = editTextUsername.text.toString().trim()
         val password = editTextPassword.text.toString().trim()
-        viewModel.login(username, password)
+
+        val error = viewModel.validateLoginInput(username, password)
+        if (error == null) {
+            viewModel.login(username, password)
+        } else {
+            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun getViewModel() = AuthViewModel::class.java

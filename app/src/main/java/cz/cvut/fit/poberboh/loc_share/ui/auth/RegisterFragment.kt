@@ -63,13 +63,18 @@ class RegisterFragment : BaseFragment<AuthViewModel, FragmentRegisterBinding, Au
     }
 
     private fun setupTextChangeListeners() {
-        editRepeatTextPassword.addTextChangedListener {
+        val updateButtonState: () -> Unit = {
             val username = editTextUsername.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
+            val repeatPassword = editRepeatTextPassword.text.toString().trim()
             buttonRegister.enable(
-                username.isNotEmpty() && password.isNotEmpty() && it.toString().isNotEmpty()
+                username.isNotEmpty() && password.isNotEmpty() && repeatPassword.isNotEmpty()
             )
         }
+
+        editTextUsername.addTextChangedListener { updateButtonState() }
+        editTextPassword.addTextChangedListener { updateButtonState() }
+        editRepeatTextPassword.addTextChangedListener { updateButtonState() }
     }
 
     private fun setupClickListeners() {
@@ -81,8 +86,14 @@ class RegisterFragment : BaseFragment<AuthViewModel, FragmentRegisterBinding, Au
         val username = editTextUsername.text.toString().trim()
         val password = editTextPassword.text.toString().trim()
         val passwordRepeat = editRepeatTextPassword.text.toString().trim()
+
         if (password == passwordRepeat) {
-            viewModel.register(username, password)
+            val error = viewModel.validateLoginInput(username, password)
+            if (error == null) {
+                viewModel.register(username, password)
+            } else {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+            }
         } else {
             Toast.makeText(
                 requireContext(),

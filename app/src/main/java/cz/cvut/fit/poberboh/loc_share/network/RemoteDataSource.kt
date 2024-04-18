@@ -1,21 +1,17 @@
 package cz.cvut.fit.poberboh.loc_share.network
 
+import cz.cvut.fit.poberboh.loc_share.BuildConfig
+import cz.cvut.fit.poberboh.loc_share.BuildConfig.BASE_URL
 import cz.cvut.fit.poberboh.loc_share.data.AppPreferences
 import cz.cvut.fit.poberboh.loc_share.network.api.RefreshApi
 import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.osmdroid.library.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RemoteDataSource {
-    companion object {
-        private const val HOST = "192.168.0.101"
-        private const val PORT = "8080"
-        private const val BASE_URL = "http://${HOST}:${PORT}"
-    }
 
     fun <Api> buildApi(api: Class<Api>, appPreferences: AppPreferences): Api {
         val authenticator = AppAuthenticator(buildRefreshApi(), appPreferences)

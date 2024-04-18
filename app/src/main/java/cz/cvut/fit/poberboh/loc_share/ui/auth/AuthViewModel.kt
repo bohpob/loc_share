@@ -22,6 +22,23 @@ class AuthViewModel(private val repository: AuthRepository) : BaseViewModel(repo
         _loginResponse.value = repository.login(username, password)
     }
 
+    fun validateLoginInput(username: String, password: String): String? {
+        if (username.isEmpty() || password.isEmpty()) {
+            return "Username and password must not be empty"
+        } else if (password.length < 8) {
+            return "Password must be at least 8 characters"
+        } else if (username.length !in 1..25) {
+            return "Username must be between 1 and 25 characters"
+        } else if (password.contains(" ") || username.contains(" ")) {
+            return "Username and password must not contain spaces"
+        } else if (!username.matches(Regex("^[a-zA-Z0-9]*$")) ||
+            !password.matches(Regex("^[a-zA-Z0-9]*$"))
+        ) {
+            return "Username must contain only english letters and numbers"
+        }
+        return null
+    }
+
     suspend fun saveTokens(accessToken: String, refreshToken: String) {
         repository.saveTokens(accessToken, refreshToken)
     }
