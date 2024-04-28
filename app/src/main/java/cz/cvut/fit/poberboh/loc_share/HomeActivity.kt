@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.telephony.TelephonyCallback
 import android.telephony.TelephonyDisplayInfo
 import android.telephony.TelephonyManager
-import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -69,7 +68,6 @@ class HomeActivity : AppCompatActivity() {
             else -> false
         }
 
-        Log.d("SuperLog", "5G network: $is5GNetwork")
         fiveGIcon.setImageResource(if (is5GNetwork) R.drawable.twotone_5g else 0)
     }
 
