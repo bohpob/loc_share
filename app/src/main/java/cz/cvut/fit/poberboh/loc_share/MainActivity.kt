@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.INTERNET
+            Manifest.permission.INTERNET,
+            Manifest.permission.READ_PHONE_STATE
         )
 
         val permissionsToRequest = ArrayList<String>()

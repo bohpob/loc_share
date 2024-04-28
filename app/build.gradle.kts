@@ -21,12 +21,12 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            buildConfigField("String", "BASE_URL", "\"http://192.168.0.101:8080\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.0.104:8080\"")
         }
         debug {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            buildConfigField("String", "BASE_URL", "\"http://192.168.0.101:8080\"")
+            buildConfigField("String", "BASE_URL", "\"http://192.168.0.104:8080\"")
         }
     }
 

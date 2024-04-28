@@ -1,6 +1,12 @@
 package cz.cvut.fit.poberboh.loc_share
 
+import android.os.Build
 import android.os.Bundle
+import android.telephony.TelephonyCallback
+import android.telephony.TelephonyDisplayInfo
+import android.telephony.TelephonyManager
+import android.util.Log
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,13 +31,46 @@ class HomeActivity : AppCompatActivity() {
     internal lateinit var myLocationOverlay: MyLocationNewOverlay
     internal lateinit var mapView: MapView
 
+    private lateinit var telephonyManager: TelephonyManager
+    private lateinit var fiveGIcon: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        fiveGIcon = findViewById(R.id.fiveGIcon)
+        fiveGIcon.setImageResource(0)
+        setupTelephonyManager()
+
         initializeMapView()
         setupNavigation()
+    }
+
+    private fun setupTelephonyManager() {
+        telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            telephonyManager.registerTelephonyCallback(mainExecutor, object : TelephonyCallback(),
+                TelephonyCallback.DisplayInfoListener {
+                override fun onDisplayInfoChanged(displayInfo: TelephonyDisplayInfo) {
+                    updateNetworkIcon(displayInfo.networkType)
+                }
+            })
+        }
+    }
+
+    private fun updateNetworkIcon(state: Int) {
+        val is5GNetwork = when (state) {
+            TelephonyManager.NETWORK_TYPE_NR,
+            TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_LTE_ADVANCED_PRO,
+            TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA,
+            TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED -> true
+
+            else -> false
+        }
+
+        Log.d("SuperLog", "5G network: $is5GNetwork")
+        fiveGIcon.setImageResource(if (is5GNetwork) R.drawable.twotone_5g else 0)
     }
 
     private fun initializeMapView() {
