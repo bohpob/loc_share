@@ -1,6 +1,5 @@
 package cz.cvut.fit.poberboh.loc_share.ui.home
 
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -61,15 +60,12 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     fun stopShare() = viewModelScope.launch {
         if (_incidentId.value != null) {
             _stop.value = repository.stopShare(_incidentId.value!!)
+            _incidentId.value = null
         }
     }
 
-    fun handleStopShare() = viewModelScope.launch {
-        _incidentId.value = null
-    }
-
     fun recordLocation() = viewModelScope.launch {
-        if (_incident.value != null &&
+        if (_incidentId.value != null &&
             _location.value?.latitude != null && _location.value?.longitude != null
         ) {
             repository.recordLocation(
@@ -96,8 +92,8 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
             startRequestTimer()
             _button.value = repository.getRedButtonProperties()
         } else {
-            stopShare()
             stopRequestTimer()
+            stopShare()
             _button.value = repository.getGreenButtonProperties()
         }
     }

@@ -79,7 +79,6 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
     private fun observeStop() {
         viewModel.stop.observe(viewLifecycleOwner) { stop ->
             when (stop) {
-                is Resource.Success -> viewModel.handleStopShare()
                 is Resource.Error -> handleApiError(stop) { viewModel.stopShare() }
                 else -> {}
             }
