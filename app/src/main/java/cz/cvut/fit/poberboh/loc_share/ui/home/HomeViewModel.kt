@@ -36,7 +36,7 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     val selectedCategory: LiveData<String> get() = _selectedCategory
     val categories: LiveData<List<String>> get() = _categories
     private var timer: Timer? = null
-    private val locationUpdateInterval = 2000L
+    private val locationUpdateInterval = 1000L
 
     fun getUsername() = viewModelScope.launch {
         if (_user.value == null) {
@@ -106,7 +106,7 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         stopRequestTimer()
 
         timer = Timer()
-        timer?.scheduleAtFixedRate(object : TimerTask() {
+        timer?.schedule(object : TimerTask() {
             override fun run() {
                 recordLocation()
             }

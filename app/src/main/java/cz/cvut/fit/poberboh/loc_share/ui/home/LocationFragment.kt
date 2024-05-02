@@ -12,8 +12,8 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
-abstract class LocationFragment<B : ViewBinding> :
-    BaseFragment<HomeViewModel, B, BasicRepository>() {
+abstract class LocationFragment<VB : ViewBinding> :
+    BaseFragment<HomeViewModel, VB, BasicRepository>() {
     protected lateinit var mapView: MapView
     private lateinit var myLocationOverlay: MyLocationNewOverlay
     private lateinit var myLocationProvider: GpsMyLocationProvider
