@@ -13,17 +13,29 @@ import androidx.lifecycle.asLiveData
 import cz.cvut.fit.poberboh.loc_share.data.AppPreferences
 import cz.cvut.fit.poberboh.loc_share.utils.startNewActivity
 
+/**
+ * Main activity class responsible for managing the application's UI and functionality.
+ */
 class MainActivity : AppCompatActivity() {
+    // AppPreferences instance to manage application preferences
     private lateinit var appPreferences: AppPreferences
+    // Request code for permissions request
     private val requestPermissionsCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Initialize AppPreferences
         appPreferences = AppPreferences(this)
+
+        // Request necessary permissions if not already granted
         requestPermissionsIfNecessary()
     }
 
+    /**
+     * Requests necessary permissions if not already granted.
+     */
     private fun requestPermissionsIfNecessary() {
         val permissions = arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -49,10 +61,14 @@ class MainActivity : AppCompatActivity() {
                 requestPermissionsCode
             )
         } else {
+            // Proceed to next activity if all permissions are granted
             newActivity()
         }
     }
 
+    /**
+     * Handles the results of permission request.
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -62,18 +78,26 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == requestPermissionsCode) {
             val allPermissionsGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
             if (allPermissionsGranted) {
+                // Proceed to next activity if all permissions are granted
                 newActivity()
             } else {
+                // Show permission denied message and finish the activity
                 showPermissionDeniedMessageAndFinish()
             }
         }
     }
 
+    /**
+     * Shows a toast message for permission denial and finishes the activity after a delay.
+     */
     private fun showPermissionDeniedMessageAndFinish() {
         Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show()
         Handler(Looper.getMainLooper()).postDelayed({ finish() }, 2500)
     }
 
+    /**
+     * Method to determine and start the appropriate activity based on the access token
+     */
     private fun newActivity() {
         appPreferences.accessToken
             .asLiveData()

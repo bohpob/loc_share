@@ -5,6 +5,12 @@ import cz.cvut.fit.poberboh.loc_share.network.Resource
 import cz.cvut.fit.poberboh.loc_share.ui.auth.LoginFragment
 import cz.cvut.fit.poberboh.loc_share.ui.base.BaseFragment
 
+/**
+ * Handles API errors in the context of a fragment.
+ *
+ * @param error The [Resource.Error] object representing the API error.
+ * @param retry An optional lambda function representing the action to retry the API call.
+ */
 fun Fragment.handleApiError(error: Resource.Error, retry: (() -> Unit)? = null) {
     when {
         error.isNetworkError -> {
@@ -25,6 +31,9 @@ fun Fragment.handleApiError(error: Resource.Error, retry: (() -> Unit)? = null) 
     }
 }
 
+/**
+ * Handles a 401 error response from the API.
+ */
 private fun Fragment.handle401Error() {
     when (this) {
         is LoginFragment -> requireView().snackbar("You've entered incorrect email or password")
@@ -32,11 +41,21 @@ private fun Fragment.handle401Error() {
     }
 }
 
+/**
+ * Handles a connection error response from the API.
+ *
+ * @param error The [Resource.Error] object representing the connection error.
+ */
 private fun Fragment.handleConnectionError(error: Resource.Error) {
     requireView().snackbar(error.errorBody?.string().toString())
     (this as BaseFragment<*, *, *>).logout()
 }
 
+/**
+ * Handles other types of errors from the API.
+ *
+ * @param error The [Resource.Error] object representing the error.
+ */
 private fun Fragment.handleOtherErrors(error: Resource.Error) {
     requireView().snackbar(error.errorBody?.string().toString())
 }

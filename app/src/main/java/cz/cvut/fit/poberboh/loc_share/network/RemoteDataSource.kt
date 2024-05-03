@@ -11,9 +11,19 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Class responsible for building Retrofit APIs.
+ */
 class RemoteDataSource {
 
+    /**
+     * Builds and returns an instance of the specified Retrofit API.
+     * @param api The API interface class.
+     * @param appPreferences The instance of [AppPreferences] used for accessing shared preferences.
+     * @return An instance of the specified Retrofit API.
+     */
     fun <Api> buildApi(api: Class<Api>, appPreferences: AppPreferences): Api {
+        // Create an authenticator and interceptor
         val authenticator = AppAuthenticator(buildRefreshApi(), appPreferences)
         val interceptor = AppInterceptor(appPreferences)
 
@@ -25,6 +35,12 @@ class RemoteDataSource {
             .create(api)
     }
 
+    /**
+     * Configures and returns an OkHttpClient instance.
+     * @param interceptor The interceptor used for adding headers to requests.
+     * @param authenticator The authenticator used for refreshing access tokens.
+     * @return An OkHttpClient instance.
+     */
     private fun getClient(
         interceptor: Interceptor,
         authenticator: Authenticator
@@ -42,6 +58,10 @@ class RemoteDataSource {
             .build()
     }
 
+    /**
+     * Builds and returns an instance of the [RefreshApi] interface.
+     * @return An instance of the [RefreshApi] interface.
+     */
     private fun buildRefreshApi(): RefreshApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

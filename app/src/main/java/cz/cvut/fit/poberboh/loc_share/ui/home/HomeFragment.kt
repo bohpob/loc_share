@@ -22,27 +22,52 @@ import cz.cvut.fit.poberboh.loc_share.utils.enable
 import cz.cvut.fit.poberboh.loc_share.utils.handleApiError
 import cz.cvut.fit.poberboh.loc_share.utils.visible
 
+/**
+ * Fragment displaying the home screen of the application.
+ * This fragment handles the user interface elements and interactions on the home screen.
+ */
 class HomeFragment : LocationFragment<FragmentHomeBinding>() {
-
+    // AutoCompleteTextView for selecting a category
     private lateinit var autoCompleteTextView: AutoCompleteTextView
+    // Button for toggling the share location feature
     private lateinit var buttonToggle: Button
+    // Button for logging out of the application
     private lateinit var buttonLogout: Button
+    // Note input field for entering additional information
     private lateinit var editTextCenter: EditText
     private lateinit var textInputLayout: TextInputLayout
+    // Progress bar for indicating loading state
     private lateinit var homeProgressBar: ProgressBar
 
+    /**
+     * Called when the fragment view is created.
+     * Initializes the view elements and sets up the fragment.
+     *
+     * @param view The view associated with the fragment.
+     * @param savedInstanceState The saved instance state of the fragment.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize the view elements
         setupViews()
+        // Observe the username and update the UI accordingly
         observeUsername()
+        // Observe the incident and handle the response accordingly
         observeIncident()
+        // Observe the stop share response and handle the response accordingly
         observeStop()
+        // Observe the button state and update the UI accordingly
         observeButtonToggle()
+        // Setup the listeners for the UI elements
         setupListeners()
+        // Setup the AutoCompleteTextView for selecting a category
         setupAutoCompleteTextView()
     }
 
+    /**
+     * Initializes the view elements for the fragment.
+     */
     private fun setupViews() {
         autoCompleteTextView = binding.autoComplete
         editTextCenter = binding.editTextCenter
@@ -53,6 +78,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         homeProgressBar.visible(false)
     }
 
+    /**
+     * Observes the username and updates the UI accordingly.
+     */
     private fun observeUsername() {
         viewModel.getUsername()
 
@@ -66,6 +94,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Observes the incident and handles the response accordingly.
+     */
     private fun observeIncident() {
         viewModel.incident.observe(viewLifecycleOwner) { incident ->
             when (incident) {
@@ -76,6 +107,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Observes the stop share response and handles the response accordingly.
+     */
     private fun observeStop() {
         viewModel.stop.observe(viewLifecycleOwner) { stop ->
             when (stop) {
@@ -85,6 +119,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Observes the button state and updates the UI accordingly.
+     */
     private fun observeButtonToggle() {
         buttonToggle.enable(false)
 
@@ -102,6 +139,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Sets up the listeners for the UI elements.
+     */
     private fun setupListeners() {
         editTextCenter.addTextChangedListener { text -> viewModel.setEnteredText(text.toString()) }
         buttonToggle.setOnClickListener { viewModel.toggleButton() }
@@ -111,6 +151,9 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Sets up the AutoCompleteTextView for selecting a category.
+     */
     private fun setupAutoCompleteTextView() {
         viewModel.categories.observe(viewLifecycleOwner) { categories ->
             val adapter = ArrayAdapter(requireContext(), R.layout.list_item, categories)
@@ -127,6 +170,11 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Updates the username in the UI.
+     *
+     * @param userResponse The response containing the user information.
+     */
     @SuppressLint("SetTextI18n")
     private fun updateUsername(userResponse: UserResponse) {
         with(binding) {
@@ -134,13 +182,27 @@ class HomeFragment : LocationFragment<FragmentHomeBinding>() {
         }
     }
 
+    /**
+     * Get the ViewModel associated with this fragment.
+     * @return The ViewModel class.
+     */
     override fun getViewModel() = HomeViewModel::class.java
 
+    /**
+     * Inflate the binding layout for this fragment.
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @return The binding object for the fragment's layout.
+     */
     override fun getFragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = FragmentHomeBinding.inflate(inflater, container, false)
 
+    /**
+     * Get the repository associated with this fragment.
+     * @return The repository object.
+     */
     override fun getFragmentRepository(): BasicRepository {
         val api = remoteDataSource.buildApi(BasicApi::class.java, appPreferences)
         return BasicRepository(api, appPreferences)

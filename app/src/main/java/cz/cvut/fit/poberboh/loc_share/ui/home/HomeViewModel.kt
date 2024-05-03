@@ -13,6 +13,12 @@ import org.osmdroid.util.GeoPoint
 import java.util.Timer
 import java.util.TimerTask
 
+/**
+ * ViewModel class for the HomeFragment and MapFragment.
+ * This class is responsible for handling the data for the HomeFragment, MapFragment and for communicating with the repository.
+ *
+ * @param repository The repository to be associated with the ViewModel.
+ */
 class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(repository) {
     private val _location: MutableLiveData<GeoPoint> = MutableLiveData()
     private val _incidentId: MutableLiveData<Long?> = MutableLiveData()
@@ -34,16 +40,24 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
     val user: LiveData<Resource<UserResponse>> get() = _user
     val selectedCategory: LiveData<String> get() = _selectedCategory
     val categories: LiveData<List<String>> get() = _categories
+    // The timer for sending location updates
     private var timer: Timer? = null
+    // The interval for sending location updates in milliseconds
     private val locationUpdateInterval = 1000L
 
+    /**
+     * Get the username of the user.
+     */
     fun getUsername() = viewModelScope.launch {
         if (_user.value == null) {
-            _user.value = Resource.Loading
+            _user.value = Resource.Loading // Set the loading state
             _user.value = repository.getUsername()
         }
     }
 
+    /**
+     * Create an incident with the selected category and note.
+     */
     fun createIncident() = viewModelScope.launch {
         if (_selectedCategory.value != null) {
             _incident.value = repository.createIncident(
@@ -53,10 +67,17 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         }
     }
 
+    /**
+     * Handle the incident with the given ID.
+     * @param incidentId The ID of the incident to handle.
+     */
     fun handleIncident(incidentId: Long) = viewModelScope.launch {
         _incidentId.value = incidentId
     }
 
+    /**
+     * Stop sharing the incident.
+     */
     fun stopShare() = viewModelScope.launch {
         if (_incidentId.value != null) {
             _stop.value = repository.stopShare(_incidentId.value!!)
@@ -64,10 +85,15 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         }
     }
 
+    /**
+     * Record the current location.
+     */
     fun recordLocation() = viewModelScope.launch {
         if (_incidentId.value != null &&
-            _location.value?.latitude != null && _location.value?.longitude != null
+            _location.value?.latitude != null &&
+            _location.value?.longitude != null
         ) {
+            // Record the location
             repository.recordLocation(
                 _incidentId.value!!,
                 _location.value?.latitude!!,
@@ -76,16 +102,26 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         }
     }
 
+    /**
+     * Update the current location.
+     * @param point The new location.
+     */
     fun updateCurrentLocation(point: GeoPoint) = viewModelScope.launch {
         _location.value = point
     }
 
+    /**
+     * Log out the user.
+     */
     fun logout() = viewModelScope.launch {
         if (!_button.value!!.first && _incidentId.value != null) {
             repository.stopShare(_incidentId.value!!)
         }
     }
 
+    /**
+     * Toggle the button state.
+     */
     fun toggleButton() {
         if (_button.value!!.first) {
             createIncident()
@@ -98,6 +134,9 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         }
     }
 
+    /**
+     * Start the timer for sending location updates.
+     */
     private fun startRequestTimer() {
         stopRequestTimer()
 
@@ -109,19 +148,34 @@ class HomeViewModel(private val repository: BasicRepository) : BaseViewModel(rep
         }, locationUpdateInterval, locationUpdateInterval)
     }
 
+    /**
+     * Stop the timer for sending location updates.
+     */
     private fun stopRequestTimer() {
         timer?.cancel()
         timer = null
     }
 
+    /**
+     * Set the selected category for the incident.
+     * @param category The category to set.
+     */
     fun setSelectedCategory(category: String) {
         _selectedCategory.value = category
     }
 
+    /**
+     * Set the entered text for the note.
+     * @param text The text to set.
+     */
     fun setEnteredText(text: String) {
         _note.value = text
     }
 
+    /**
+     * Get the username form from the repository. Example "Username:". Used for the UI.
+     * @return The username form.
+     */
     fun getUsernameForm(): String {
         return repository.getUsernameForm()
     }
