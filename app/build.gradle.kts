@@ -33,7 +33,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
 
             // Define BASE_URL build configuration field for debug build
-            buildConfigField("String", "BASE_URL", "\"http://192.168.0.104:8080\"")
+            buildConfigField("String", "BASE_URL", "\"http://178.128.202.70:8080\"")
         }
     }
 
