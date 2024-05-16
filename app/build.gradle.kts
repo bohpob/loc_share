@@ -70,14 +70,21 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.coroutines.android)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
 
+    testImplementation(libs.mockk)
     testImplementation(libs.junit)
+    testImplementation(libs.mockwebserver)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.androidx.coroutines.test)
 
+    androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.hamcrest.library)
     androidTestImplementation(libs.androidx.espresso.core)
 }
